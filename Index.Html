@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tiny EveryCure — A Small Drug Repurposing System</title>
+<style>
+  :root {
+    --paper: #EFEDE4;
+    --ink: #1F2A24;
+    --moss: #3E5C4C;
+    --moss-dark: #2A4136;
+    --rust: #A8542E;
+    --line: #C9C3B2;
+    --card: #F7F5EC;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    line-height: 1.55;
+  }
+
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  header {
+    padding: 72px 0 40px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .kicker {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: var(--moss);
+    margin: 0 0 14px;
+  }
+
+  h1 {
+    font-size: 44px;
+    line-height: 1.15;
+    margin: 0 0 18px;
+    max-width: 14ch;
+    font-weight: 500;
+  }
+
+  .lede {
+    font-size: 19px;
+    max-width: 58ch;
+    color: #3A473F;
+    margin: 0;
+  }
+
+  section {
+    padding: 52px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  section:last-of-type { border-bottom: none; }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 500;
+    margin: 0 0 22px;
+  }
+
+  p {
+    max-width: 62ch;
+    font-size: 17px;
+  }
+
+  .diagram {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    max-width: 560px;
+    margin: 30px 0 8px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 14px;
+  }
+
+  .node {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 10px 14px;
+    text-align: center;
+    flex: 1;
+  }
+
+  .node.hit {
+    border-color: var(--moss);
+    background: #E7EEE7;
+  }
+
+  .arrow {
+    color: var(--rust);
+    font-size: 18px;
+  }
+
+  .caption {
+    font-size: 14px;
+    color: #6B7168;
+    font-family: "Courier New", Courier, monospace;
+    margin-top: 6px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--moss);
+    padding: 22px 24px;
+    margin-top: 22px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 14.5px;
+    white-space: pre-wrap;
+  }
+
+  .card .label {
+    color: var(--rust);
+  }
+
+  .card .score {
+    color: var(--moss-dark);
+    font-weight: bold;
+  }
+
+  .steps {
+    counter-reset: step;
+    padding: 0;
+    margin: 26px 0 0;
+    list-style: none;
+    max-width: 62ch;
+  }
+
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding-left: 40px;
+    margin-bottom: 20px;
+    font-size: 17px;
+  }
+
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--moss);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 13px;
+    color: var(--moss-dark);
+  }
+
+  .fine {
+    font-size: 14px;
+    color: #6B7168;
+    margin-top: 30px;
+  }
+
+  footer {
+    padding: 40px 0 70px;
+    font-size: 14px;
+    color: #6B7168;
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 48px 0 32px; }
+    h1 { font-size: 32px; }
+    .diagram { flex-direction: column; }
+    .arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <p class="kicker">a small drug-repurposing lab notebook</p>
+    <h1>Tiny EveryCure</h1>
+    <p class="lede">
+      A miniature version of a real idea used in medicine today: drugs that already
+      work for one disease sometimes work for a second disease too — because they
+      quietly affect the same biology underneath.
+    </p>
+  </header>
+
+  <section>
+    <h2>What this is</h2>
+    <p>
+      This page walks through a small system built to find "drug repurposing"
+      candidates. It doesn't test anything in a lab or a patient — it just looks
+      at connections that are already known, and asks a simple question over
+      and over: <em>if two different problems share the same underlying switch,
+      could the same drug flip both?</em>
+    </p>
+    <p>
+      The system knows about six drugs, the diseases they're approved for, and the
+      biological targets — proteins, receptors, pathways — that each drug interacts
+      with. When two things share a target, that's a hint worth writing down.
+    </p>
+  </section>
+
+  <section>
+    <h2>How it finds a match</h2>
+    <p>Every match follows the same three-step path:</p>
+    <div class="diagram">
+      <div class="node hit">Drug</div>
+      <div class="arrow">→</div>
+      <div class="node hit">Shared Target</div>
+      <div class="arrow">→</div>
+      <div class="node hit">New Disease</div>
+    </div>
+    <p class="caption">e.g. Ibuprofen → JAK2 → Psoriasis</p>
+    <p style="margin-top:26px;">
+      Nobody told the system directly that Ibuprofen might help with Psoriasis.
+      It found that path on its own, by noticing that Ibuprofen affects JAK2,
+      and JAK2 is separately known to be linked to Psoriasis. The more targets
+      two things share, the higher the resulting score — a rough measure of
+      how strong the hint is.
+    </p>
+  </section>
+
+  <section>
+    <h2>Example output</h2>
+    <p>Here's what one result from the system looks like once it's printed:</p>
+    <div class="card">Drug: <span class="label">Ibuprofen</span>
+Currently used for: Arthritis
+May be repurposed for: <span class="label">Psoriasis</span>
+Shared target: JAK2
+Score: <span class="score">1</span>
+Explanation: Ibuprofen may help treat Psoriasis because both
+are connected to JAK2.</div>
+  </section>
+
+  <section>
+    <h2>Reading a result</h2>
+    <ol class="steps">
+      <li>
+        <strong>Currently used for</strong> shows the drug's actual, established use —
+        the thing it's already known to do.
+      </li>
+      <li>
+        <strong>May be repurposed for</strong> is the candidate the system found —
+        never a confirmed treatment, just a lead worth investigating.
+      </li>
+      <li>
+        <strong>Shared target</strong> names the biological link that ties the two
+        diseases together through this one drug.
+      </li>
+      <li>
+        <strong>Score</strong> counts how many targets are shared. One shared target
+        is a hint. Three or four is a much stronger pattern.
+      </li>
+    </ol>
+  </section>
+
+  <section>
+    <p class="fine">
+      This is a teaching model, not a diagnostic tool. Real systems like EveryCure
+      work from millions of verified biological and clinical data points, reviewed
+      by researchers before anything is tested. This project borrows the same
+      underlying idea — shared targets suggest shared possibilities — at a scale
+      small enough to hold in your head.
+    </p>
+  </section>
+
+  <footer>
+    Built as a class lab exercise on knowledge graphs and drug repurposing.
+  </footer>
+
+</div>
+
+</body>
+</html>
